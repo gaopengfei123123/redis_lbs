@@ -18,6 +18,8 @@ interface LBSInterface
      */
     public function add(array $params,$key = null);
 
+    public function del($name,$key = null);
+
     /**
      * 查询指定坐标范围内的所有存在内容
      * @param $key

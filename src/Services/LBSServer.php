@@ -4,12 +4,13 @@ use LBS\Contracts\LBSInterface;
 
 /**
  * 新建redis-lbs服务
+ * 这里为了节省代码就把所有关于集合的值给设置了个默认的，输入顺序和redis api的有点区别
  */
 class LBSService implements LBSInterface
 {
     protected static $redis = null;
 
-    protected $geoset_name = 'LBS_set';
+    public $geoset_name = 'LBS_set';
 
     protected $unit_allow = ['m','km','ft','mi'];
     public $radium_option = [
@@ -45,8 +46,9 @@ class LBSService implements LBSInterface
     /**
      * 在集合中新加一个坐标
      * @param array $params
+     *  结构是 ['name'=>'xxx','long'=>'1.2321','lat'=>'1.3112']或者[['name'=>'xxx','long'=>'1.2321','lat'=>'1.3112']]
      * @param null $key
-     * @return null|string
+     * @return int
      */
     public function add(array $params,$key = null)
     {
@@ -63,8 +65,21 @@ class LBSService implements LBSInterface
     }
 
     /**
+     * 删除集合中指定元素
+     * @param $name
+     * @param null $key  默认存在集合，可以指定
+     * @return int
+     */
+    public function del($name, $key = null)
+    {
+        $key = $key? : $this->geoset_name;
+        return self::$redis->zrem($key,$name);
+    }
+
+    /**
      * 重组添加命令，可以批量添加
      * @param $params
+     * @param $key
      * @return array
      */
     protected function paramsFormat(&$params,&$key)
@@ -108,18 +123,18 @@ class LBSService implements LBSInterface
     }
 
     /**
-     * 查询范围内元素，如果不转 key就用默认的
-     * @param $long
-     * @param $lat
-     * @param $radius
-     * @param $unit
-     * @param null $key
+     * 根据坐标查询范围内元素，如果不转 key就用默认的
+     * @param $long     经度
+     * @param $lat      纬度
+     * @param $radius   范围
+     * @param $unit     单位  (仅支持 m,km,ft,mi)
+     * @param null $key 集合名
      * @return mixed
      */
     public function search($long, $lat, $radius, $unit,$key=null)
     {
         $key = is_null($key)? $this->geoset_name : $key;
-        $radius = (int)$radius;
+        $radius = (float)$radius;
         $unit = (in_array($unit,$this->unit_allow))? $unit : 'm';
         $options = $this->radium_option;
 
@@ -128,6 +143,14 @@ class LBSService implements LBSInterface
         return $this->withKey($res,$options);
     }
 
+    /**
+     * 根据集合中的元素查询范围内元素，如果不转 key就用默认的
+     * @param $name         集合中的元素名
+     * @param $radius       范围
+     * @param $unit         单位
+     * @param null $key     集合名
+     * @return mixed
+     */
     public function searchByMembers($name, $radius, $unit,$key=null)
     {
         $key = is_null($key)? $this->geoset_name : $key;
@@ -140,16 +163,24 @@ class LBSService implements LBSInterface
         return $this->withKey($res,$options);
     }
 
+    //待完善
     public function geoEncode($long, $lat)
     {
         return self::$redis->executeRaw(['GEOENCODE',$long,$lat]);
     }
-
+    //待完善
     public function geoDecode($hash)
     {
         return self::$redis->executeRaw(['GEODECODE',$hash]);
     }
 
+    /**
+     * 列出集合中的内容
+     * @param $key          集合的key
+     * @param int $start    起始位置
+     * @param int $end      结束位置 -1 为直到末尾
+     * @return array
+     */
     public function list($key, $start = 0, $end = -1)
     {
         $test = self::$redis->zrange($key,$start,$end);
