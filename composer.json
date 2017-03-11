@@ -8,11 +8,15 @@
         }
     ],
     "require": {
-      "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "predis/predis": "^1.1"
+
     },
     "autoload": {
+        "classmap": ["src/"],
+        "files": ["src/helpers.php"],
         "psr-4": {
-            "LBS\\": "src"
+            "LBS\\": "src/"
         }
     }
 }
