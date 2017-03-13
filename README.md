@@ -7,6 +7,10 @@
 composer require gaopengfei/redis_lbs
 ```
 
+## 配置
+如果不是 `laravel` 框架的话，需要修改配置文件
+
+
 #基本操作
 
 ## 初始化

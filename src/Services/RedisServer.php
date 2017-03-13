@@ -14,11 +14,8 @@ use Predis\Client;
 class RedisServer
 {
     public static $server = null;
-    public function __construct($is_config = null)
+    public function __construct($config_file = null)
     {
-        //引入自带文件
-        $config_file = $is_config?: include_once (__DIR__.'/../config/config.php');
-
         //连接信息
         $config = [
             'scheme' => 'tcp',

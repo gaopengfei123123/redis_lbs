@@ -47,10 +47,10 @@ $add_params = [
 //$list = $test->list($test->geoset_name);
 
 //$search = $test->search('116.435182767868','39.91811857809279',500,'m');
-//$search2 = $test->searchByMembers('fesco',500,'m');
+$search2 = $test->searchByMembers('fesco',500,'m');
 
-$list = $test->list($test->geoset_name);
+//$list = $test->list($test->geoset_name);
 
-dd($list);
+dd($search2);
 
 //$test->add('2333',['a','b','c']);

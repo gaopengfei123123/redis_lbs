@@ -21,25 +21,42 @@ class LBSService implements LBSInterface
 
     /**
      * 初始化，目前可选 geoset_name 和 radirm_option 参数
+     * 比如 $option = [
+     *              'geoset_name' => 'xxx',
+     *              'radium_option' => [
+     *                      'WITHDIST' => true,
+                            'SORT' => 'asc',
+                            'WITHHASH' => false,
+     *                  ]
+     *              ]
      * LBSService constructor.
      * @param array $option
      */
-    public function __construct($option=[])
+    public function __construct()
     {
+        $config = $this->getConfig();
+        extract($config);
+
         if (is_null(self::$redis)){
             $redis = new RedisServer();
             self::$redis = $redis::$server;
         }
 
-        extract($option);
+
         if (isset($geoset_name) && !empty($geoset_name)){
             $this->geoset_name = $geoset_name;
         }
 
-        if(isset($option) && !empty($option)){
-            $this->radium_option = array_merge($this->radium_option,$option);
+        if(isset($radium_option) && !empty($radium_option)){
+            $this->radium_option = array_merge($this->radium_option,$radium_option);
         }
+    }
 
+    protected function getConfig()
+    {
+        $file =  include_once (__DIR__.'/../config/config.php');
+
+        return $file?:[];
     }
 
 
@@ -198,21 +215,24 @@ class LBSService implements LBSInterface
             unset($option['SORT']);
         }
         foreach($array as &$item){
-            $arr = [];
-            if(isset($item[0])){
-                $arr['name'] = $item[0];
-            }else{
-                $arr = null;
-                continue;
-            }
-            if(isset($item[1])){
-                $arr['dist'] = $item[1];
+            if(is_array($item)){
+                $arr = [];
+                if(isset($item[0])){
+                    $arr['name'] = $item[0];
+                }else{
+                    $arr = null;
+                    continue;
+                }
+                if(isset($item[1])){
+                    $arr['dist'] = $item[1];
+                }
+
+                if(isset($item[2])){
+                    $arr['hash'] = $item[2];
+                }
+                $item = $arr;
             }
 
-            if(isset($item[2])){
-                $arr['hash'] = $item[2];
-            }
-            $item = $arr;
         }
 
         return $array;
