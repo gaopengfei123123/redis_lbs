@@ -63,7 +63,15 @@ $config = [
 ```
 php artisan vendor:publish
 ```
-将生成 `config/redis_lbs.php` 配置文件
+将生成 `config/redis_lbs.php` 配置文件，配置文件中的
+```
+//是否应用在laravel当中
+'is_laravel' => false,
+//使用laravel的redis版本
+'laravel_redis' => 'default',
+```
+当 `is_laravel => true` 的时候， `laravel_redis => 'default'` 将调用 `config/database.php`下的redis相应的配置
+
 
 有以下三种使用方式
 ```
