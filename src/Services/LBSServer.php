@@ -6,7 +6,7 @@ use LBS\Contracts\LBSInterface;
  * 新建redis-lbs服务
  * 这里为了节省代码就把所有关于集合的值给设置了个默认的，输入顺序和redis api的有点区别
  */
-class LBSService implements LBSInterface
+class LBSServer implements LBSInterface
 {
     protected static $redis = null;
 
@@ -58,9 +58,10 @@ class LBSService implements LBSInterface
      */
     protected function getConfig($config = null)
     {
-
         $file =$config?: include_once (__DIR__.'/../config/config.php');
-
+        if(function_exists('config')){
+            $file = $config?:config('redis_lbs');
+        }
         return $file?:[];
     }
 
