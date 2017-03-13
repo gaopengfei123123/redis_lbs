@@ -1,4 +1,4 @@
-<?php
+<?php namespace LBS;
 /**
  * Created by PhpStorm.
  * User: gaopengfei

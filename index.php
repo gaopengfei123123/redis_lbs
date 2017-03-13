@@ -51,6 +51,6 @@ $search2 = $test->searchByMembers('fesco',500,'m');
 
 //$list = $test->list($test->geoset_name);
 
-dd($search2);
+LBS\dd($search2);
 
 //$test->add('2333',['a','b','c']);
