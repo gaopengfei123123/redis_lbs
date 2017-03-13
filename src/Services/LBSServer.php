@@ -61,6 +61,10 @@ class LBSServer implements LBSInterface
         $file =$config?: include_once (__DIR__.'/../config/config.php');
         if(function_exists('config')){
             $file = $config?:config('redis_lbs');
+
+            if(isset($file['is_laravel']) && $file['is_laravel'] && isset($file['laravel_redis'])){
+                $file['redis_connection'] = config("database.redis.{$file['laravel_redis']}");
+            }
         }
         return $file?:[];
     }
