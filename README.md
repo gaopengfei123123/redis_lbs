@@ -8,8 +8,40 @@ composer require gaopengfei/redis_lbs
 ```
 
 ## 配置
-如果不是 `laravel` 框架的话，需要修改配置文件
+如果不是 `laravel` 框架的话，需要修改配置文件 `src/config/config.php`
+```
+  'geoset_name' => 'LBS_set',
+    'radium_option' => [
+        'WITHDIST' => true,
+        'SORT' => 'asc',
+        'WITHHASH' => false,
+    ],
+    'redis_connection' => [
+        'host'     => '127.0.0.1',      //连接地址
+        'port'     => 6379,             //端口
+        'database' => 1,                //库索引
+        'password' => null,             //密码
+    ],
 
+```
+***但是***，如果是在 `vendor` 文件夹下修改就不能将它从版本库中移除了，所以也可以按照以上的格式写一个数组初始化的时候添加进去比如:
+```
+$config = [
+              'geoset_name' => 'LBS_set',         //集合名
+              'radium_option' => [                //搜寻附近的人的时候定义的一些参数
+                  'WITHDIST' => true,
+                  'SORT' => 'asc',
+                  'WITHHASH' => false,
+              ],
+              'redis_connection' => [
+                  'host'     => '127.0.0.1',      //连接地址
+                  'port'     => 6379,             //端口
+                  'database' => 1,                //库索引
+                  'password' => null,             //密码
+              ],
+          ];
+ $lbs = new \LBS\Services\LBSService($config);
+```
 
 #基本操作
 

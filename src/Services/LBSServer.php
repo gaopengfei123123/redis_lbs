@@ -32,9 +32,9 @@ class LBSService implements LBSInterface
      * LBSService constructor.
      * @param array $option
      */
-    public function __construct()
+    public function __construct($config = null)
     {
-        $config = $this->getConfig();
+        $config = $this->getConfig($config);
         extract($config);
 
         if (is_null(self::$redis)){
@@ -52,9 +52,14 @@ class LBSService implements LBSInterface
         }
     }
 
-    protected function getConfig()
+    /**
+     * 这里是获取配置文件的方法
+     * @return array
+     */
+    protected function getConfig($config = null)
     {
-        $file =  include_once (__DIR__.'/../config/config.php');
+
+        $file =$config?: include_once (__DIR__.'/../config/config.php');
 
         return $file?:[];
     }

@@ -6,8 +6,8 @@
  * Time: 下午9:22
  */
 return [
-    'geoset_name' => 'LBS_set',
-    'radium_option' => [
+    'geoset_name' => 'LBS_set',         //集合名
+    'radium_option' => [                //搜寻附近的人的时候定义的一些参数
         'WITHDIST' => true,
         'SORT' => 'asc',
         'WITHHASH' => false,
