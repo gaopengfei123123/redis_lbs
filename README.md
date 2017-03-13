@@ -43,6 +43,44 @@ $config = [
  $lbs = new \LBS\Services\LBSService($config);
 ```
 
+如果是 `laravel` 框架下，需要编辑 `config/app.php`
+```
+ 'providers' => [
+    ...
+     \LBS\Provider\RedisLbsProvider::class,
+    ...
+  ],
+ 
+ //如果需要facade模式的话也可以开一下
+  'aliases' => [
+    ...
+    'LBSServer' => \LBS\Facade\LBSServer::class,
+    ...
+  ]
+```
+
+然后执行
+```
+php artisan vendor:publish
+```
+将生成 `config/redis_lbs.php` 配置文件
+
+有以下三种使用方式
+```
+1> $lbs = new \LBS\Services\LBSServer();
+
+2> public function __construct(LBSInterface $LBS)
+       {
+           $list = $LBS->list($LBS->geoset_name);
+   
+           dd($list);
+       }
+   }
+3> $search2 = \LBS\Facade\LBSServer::searchByMembers('fesco',500,'m');
+
+```
+方法 1 和 3 因为引入的名字是一样的，所以需要注意规避一下 比如 `use LBS\Facade\LBSServer as LBServer`
+
 #基本操作
 
 ## 初始化

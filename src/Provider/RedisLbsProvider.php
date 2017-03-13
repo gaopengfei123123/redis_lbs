@@ -43,7 +43,7 @@ class RedisLbsProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [LBSInterface::class];
+        return [LBSInterface::class,'LBSServer'];
     }
 
 }

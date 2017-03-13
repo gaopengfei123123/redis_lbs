@@ -6,7 +6,7 @@ namespace LBS\Facade;
  * Date: 2017/3/13
  * Time: 下午5:04
  */
-class LBSServerFacade extends \Illuminate\Support\Facades\Facade
+class LBSServer extends \Illuminate\Support\Facades\Facade
 {
     protected static function getFacadeAccessor()
     {
