@@ -49,7 +49,7 @@ $add_params = [
 //$search = $test->search('116.435182767868','39.91811857809279',500,'m');
 //$search2 = $test->searchByMembers('fesco',500,'m');
 
-$list = $test->list($test->geoset_name,2,-1);
+$list = $test->list($test->geoset_name);
 
 dd($list);
 
