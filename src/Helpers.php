@@ -5,9 +5,9 @@
  * Date: 2017/3/11
  * Time: 下午12:11
  */
-if (! function_exists('dd')) {
-    function dd($var = null)
-    {
+
+class Helper{
+    public static function dd($var=null){
         if (is_null($var)) die();
         $param = func_get_args();
 

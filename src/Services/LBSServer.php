@@ -146,10 +146,10 @@ class LBSService implements LBSInterface
 
     /**
      * 根据坐标查询范围内元素，如果不转 key就用默认的
-     * @param $long     经度
-     * @param $lat      纬度
-     * @param $radius   范围
-     * @param $unit     单位  (仅支持 m,km,ft,mi)
+     * @param $long     //经度
+     * @param $lat      //纬度
+     * @param $radius   //范围
+     * @param $unit     //单位  (仅支持 m,km,ft,mi)
      * @param null $key 集合名
      * @return mixed
      */
@@ -167,10 +167,10 @@ class LBSService implements LBSInterface
 
     /**
      * 根据集合中的元素查询范围内元素，如果不转 key就用默认的
-     * @param $name         集合中的元素名
-     * @param $radius       范围
-     * @param $unit         单位
-     * @param null $key     集合名
+     * @param $name         //集合中的元素名
+     * @param $radius       //范围
+     * @param $unit         //单位
+     * @param null $key     //集合名
      * @return mixed
      */
     public function searchByMembers($name, $radius, $unit,$key=null)
@@ -198,9 +198,9 @@ class LBSService implements LBSInterface
 
     /**
      * 列出集合中的内容
-     * @param $key          集合的key
-     * @param int $start    起始位置
-     * @param int $end      结束位置 -1 为直到末尾
+     * @param $key          //集合的key
+     * @param int $start    //起始位置
+     * @param int $end      //结束位置 -1 为直到末尾
      * @return array
      */
     public function list($key, $start = 0, $end = -1)
