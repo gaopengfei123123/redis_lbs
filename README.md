@@ -76,10 +76,9 @@ php artisan vendor:publish
            dd($list);
        }
    }
-3> $search2 = \LBS\Facade\LBSServer::searchByMembers('fesco',500,'m');
+3> $search2 = \LBSServer::searchByMembers('fesco',500,'m');
 
 ```
-方法 1 和 3 因为引入的名字是一样的，所以需要注意规避一下 比如 `use LBS\Facade\LBSServer as LBServer`
 
 #基本操作
 
