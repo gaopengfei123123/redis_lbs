@@ -1,5 +1,6 @@
 <?php
 namespace LBS\Services;
+
 use LBS\Contracts\LBSInterface;
 
 /**
@@ -37,18 +38,18 @@ class LBSServer implements LBSInterface
         $config = $this->getConfig($config);
         extract($config);
 
-        if (is_null(self::$redis)){
-            $redis = new RedisServer();
+        if (is_null(self::$redis)) {
+            $redis = new RedisServer($config);
             self::$redis = $redis::$server;
         }
 
 
-        if (isset($geoset_name) && !empty($geoset_name)){
+        if (isset($geoset_name) && !empty($geoset_name)) {
             $this->geoset_name = $geoset_name;
         }
 
-        if(isset($radium_option) && !empty($radium_option)){
-            $this->radium_option = array_merge($this->radium_option,$radium_option);
+        if (isset($radium_option) && !empty($radium_option)) {
+            $this->radium_option = array_merge($this->radium_option, $radium_option);
         }
     }
 
@@ -58,11 +59,11 @@ class LBSServer implements LBSInterface
      */
     protected function getConfig($config = null)
     {
-        $file =$config?: include_once (__DIR__.'/../config/config.php');
-        if(function_exists('config')){
+        $file =$config?: include_once(__DIR__.'/../config/config.php');
+        if (function_exists('config')) {
             $file = $config?:config('redis_lbs');
 
-            if(isset($file['is_laravel']) && $file['is_laravel'] && isset($file['laravel_redis'])){
+            if (isset($file['is_laravel']) && $file['is_laravel'] && isset($file['laravel_redis'])) {
                 $file['redis_connection'] = config("database.redis.{$file['laravel_redis']}");
             }
         }
@@ -77,14 +78,14 @@ class LBSServer implements LBSInterface
      * @param null $key
      * @return int
      */
-    public function add(array $params,$key = null)
+    public function add(array $params, $key = null)
     {
         $key = $key? : $this->geoset_name;
 
-        $this->paramsFormat($params,$key);
+        $this->paramsFormat($params, $key);
 
 
-        array_unshift($params,'GEOADD');
+        array_unshift($params, 'GEOADD');
 
         $res = self::$redis->executeRaw($params);
 
@@ -100,7 +101,7 @@ class LBSServer implements LBSInterface
     public function del($name, $key = null)
     {
         $key = $key? : $this->geoset_name;
-        return self::$redis->zrem($key,$name);
+        return self::$redis->zrem($key, $name);
     }
 
     /**
@@ -109,24 +110,23 @@ class LBSServer implements LBSInterface
      * @param $key
      * @return array
      */
-    protected function paramsFormat(&$params,&$key)
+    protected function paramsFormat(&$params, &$key)
     {
-        if(is_array(current($params))){
-            $res = array_filter(array_map([$this,'buildAddParams'],$params));
-        }else{
+        if (is_array(current($params))) {
+            $res = array_filter(array_map([$this,'buildAddParams'], $params));
+        } else {
             $res = $this->buildAddParams($params)?: [];
         }
         $params = $res;
 
 
-        if(!empty($params)){
-            foreach ($params as &$item){
-                $item = implode('|',$item);
+        if (!empty($params)) {
+            foreach ($params as &$item) {
+                $item = implode('|', $item);
             }
-            $params = implode('|',$params);
-            $params = explode('|',$params);
-            array_unshift($params,$key);
-
+            $params = implode('|', $params);
+            $params = explode('|', $params);
+            array_unshift($params, $key);
         }
 
         return $params;
@@ -140,7 +140,7 @@ class LBSServer implements LBSInterface
     protected function buildAddParams($item)
     {
         $arr = [];
-        if(isset($item['long']) && isset($item['long']) && isset($item['name'])){
+        if (isset($item['long']) && isset($item['long']) && isset($item['name'])) {
             $arr['long'] = $item['long'];
             $arr['lat'] = $item['lat'];
             $arr['name'] = $item['name'];
@@ -158,16 +158,16 @@ class LBSServer implements LBSInterface
      * @param null $key 集合名
      * @return mixed
      */
-    public function search($long, $lat, $radius, $unit,$key=null)
+    public function search($long, $lat, $radius, $unit, $key=null)
     {
         $key = is_null($key)? $this->geoset_name : $key;
         $radius = (float)$radius;
-        $unit = (in_array($unit,$this->unit_allow))? $unit : 'm';
+        $unit = (in_array($unit, $this->unit_allow))? $unit : 'm';
         $options = $this->radium_option;
 
-        $res = self::$redis->georadius($key,$long,$lat,$radius,$unit,$options);
+        $res = self::$redis->georadius($key, $long, $lat, $radius, $unit, $options);
 
-        return $this->withKey($res,$options);
+        return $this->withKey($res, $options);
     }
 
     /**
@@ -178,16 +178,16 @@ class LBSServer implements LBSInterface
      * @param null $key     //集合名
      * @return mixed
      */
-    public function searchByMembers($name, $radius, $unit,$key=null)
+    public function searchByMembers($name, $radius, $unit, $key=null)
     {
         $key = is_null($key)? $this->geoset_name : $key;
         $radius = (int)$radius;
-        $unit = (in_array($unit,$this->unit_allow))? $unit : 'm';
+        $unit = (in_array($unit, $this->unit_allow))? $unit : 'm';
         $options = $this->radium_option;
 
-        $res = self::$redis->georadiusbymember($key,$name,$radius,$unit,$options);
+        $res = self::$redis->georadiusbymember($key, $name, $radius, $unit, $options);
 
-        return $this->withKey($res,$options);
+        return $this->withKey($res, $options);
     }
 
     //待完善
@@ -210,7 +210,7 @@ class LBSServer implements LBSInterface
      */
     public function list($key, $start = 0, $end = -1)
     {
-        $test = self::$redis->zrange($key,$start,$end);
+        $test = self::$redis->zrange($key, $start, $end);
         return $test;
     }
 
@@ -220,33 +220,31 @@ class LBSServer implements LBSInterface
      * @param $option
      * @return mixed
      */
-    public function withKey(&$array,$option){
-        if(isset($option['SORT'])){
+    public function withKey(&$array, $option)
+    {
+        if (isset($option['SORT'])) {
             unset($option['SORT']);
         }
-        foreach($array as &$item){
-            if(is_array($item)){
+        foreach ($array as &$item) {
+            if (is_array($item)) {
                 $arr = [];
-                if(isset($item[0])){
+                if (isset($item[0])) {
                     $arr['name'] = $item[0];
-                }else{
+                } else {
                     $arr = null;
                     continue;
                 }
-                if(isset($item[1])){
+                if (isset($item[1])) {
                     $arr['dist'] = $item[1];
                 }
 
-                if(isset($item[2])){
+                if (isset($item[2])) {
                     $arr['hash'] = $item[2];
                 }
                 $item = $arr;
             }
-
         }
 
         return $array;
-
     }
 }
-
